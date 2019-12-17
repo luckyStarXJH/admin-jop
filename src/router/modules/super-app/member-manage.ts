@@ -19,7 +19,7 @@ const router = {
           component: () => import('@/views/super-app/member-manage/membership-manage/pages/messageReminder.vue'),
           meta: {
             title: '消息提醒类型设置',
-            icon: 'icon-xiansuochi',
+            icon: 'icon-message',
           },
         },
         {
@@ -27,7 +27,7 @@ const router = {
           component: () => import('@/views/super-app/member-manage/membership-manage/pages/operation.vue'),
           meta: {
             title: '操作功能设置',
-            icon: 'icon-kezixiansuo',
+            icon: 'icon-gongnengshezhi',
           },
         },
         {
@@ -35,7 +35,7 @@ const router = {
           component: () => import('@/views/super-app/member-manage/membership-manage/pages/memberTag.vue'),
           meta: {
             title: '会员标签管理',
-            icon: 'icon-kezikehu',
+            icon: 'icon-huiyuanbiaoqian',
           },
         }
       ]

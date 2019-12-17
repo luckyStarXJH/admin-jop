@@ -5,7 +5,7 @@ const menu = {
   appCode: 'customManage',
   canAccess: false,
   path: baseUrl,
-  icon: 'icon-keziguanli',
+  icon: 'icon-huiyuan2',
   children: [
     {
       appName: '会员管理',
