@@ -99,6 +99,9 @@ export default class PoolCount extends Vue {
     flex: 1;
     flex-direction: column;
     margin-left: 30px;
+    .message-btn{
+      padding: 12px 45px;
+    }
     .title{
       color: #333;
       font-weight: bold;
