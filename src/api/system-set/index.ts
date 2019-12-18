@@ -269,3 +269,20 @@ export function updateAccountByBatch(data: any) {
     data
   })
 }
+// 会员管理
+// 操作功能设置--查询
+export function getMemberOperatSetInfo() {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/getMemberOperatSetInfo`,
+    method: `POST`,
+    data: {}
+  })
+}
+// 操作功能设置-- 信息设置
+export function patchMemberOperatSetInfo(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/patchMemberOperatSetInfo`,
+    method: `POST`,
+    data
+  })
+}

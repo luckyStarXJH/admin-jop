@@ -89,12 +89,10 @@
     <el-dialog title="新增-会员标签"  width="27%" :visible.sync="dialogFormVisible" :before-close="handleClose">
       <el-form :model="formTag" ref="formTag">
         <el-form-item label="标签名称：" :label-width="formLabelWidth">
-          <el-input v-model="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off"></el-input>
+          <el-input v-model="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off" maxlength="8"></el-input>
         </el-form-item>
-        <el-form-item label="标签默认排序：" :label-width="formLabelWidth" :rules="[
-            {type: 'number', message: '标签排序必须为数字', trigger: 'blur'}
-          ]">
-          <el-input v-model.number="formTag.sort" placeholder="标签排序"></el-input>
+        <el-form-item label="标签默认排序：" :label-width="formLabelWidth" >
+          <el-input v-model.number="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
         </el-form-item>
         <el-form-item label="标签状态：" :label-width="formLabelWidth">
           <template>

@@ -11,51 +11,43 @@
       <div class="opertion-content">
         <div class="content-item">
           <p class="content-title">敏感信息设置</p>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="拨打电话功能"></el-checkbox>
-            <el-checkbox label="查看消费记录"></el-checkbox>
-          </el-checkbox-group>
+          <el-checkbox label="拨打电话功能" v-model="checkList.phone"></el-checkbox>
+          <el-checkbox label="查看消费记录" v-model="checkList.selectConsumeRecord"></el-checkbox>
         </div>
 
         <div class="content-item">
           <p class="content-title">赠送操作设置</p>
-          <el-checkbox-group v-model="checkList">
-            <div class="check-div">
-              <el-checkbox label="赠送积分"></el-checkbox>
-              <div class="check-setting">
-                <span class="check-tip">设置每个账号每月可赠送积分限额：</span>
-                <el-input class="el-input-class" v-model="dateInput"></el-input>
-              </div>
+          <div class="check-div">
+            <el-checkbox label="赠送积分" v-model="checkList.giveIntegral"></el-checkbox>
+            <div class="check-setting">
+              <span class="check-tip">设置每个账号每月可赠送积分限额：</span>
+              <el-input class="el-input-class"  v-model="checkList.giveIntegralLimit" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
             </div>
-            <div class="check-div">
-              <el-checkbox label="赠送优惠券"></el-checkbox>
-              <div class="check-setting">
-                <span class="check-tip">设置每个账号每月可赠送优惠券张数：</span>
-                <el-input class="el-input-class" v-model="dateInput"></el-input>
-              </div>
-            </div>   
-          </el-checkbox-group>
+          </div>
+          <div class="check-div">
+            <el-checkbox label="赠送优惠券" v-model="checkList.giveCoupon"></el-checkbox>
+            <div class="check-setting">
+              <span class="check-tip">设置每个账号每月可赠送优惠券张数：</span>
+              <el-input class="el-input-class" v-model="checkList.giveCouponNum" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+            </div>
+          </div>   
         </div>
 
         <div class="content-item">
           <p class="content-title">其他操作</p>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="发送短信"></el-checkbox>
-            <el-checkbox label="邀请评价"></el-checkbox>
-            <el-checkbox label="添加标签"></el-checkbox>
-            <el-checkbox label="跟进记录"></el-checkbox>
-          </el-checkbox-group>
+            <el-checkbox label="发送短信" v-model="checkList.sendSms"></el-checkbox>
+            <el-checkbox label="邀请评价" v-model="checkList.inviteReviews"></el-checkbox>
+            <el-checkbox label="添加标签" v-model="checkList.addFlag"></el-checkbox>
+            <el-checkbox label="跟进记录" v-model="checkList.followRecord"></el-checkbox>
         </div>
 
         <div class="title">批量功能开关</div>
         <div class="content-item">
           <p class="content-title">发送消息</p>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="批量发送微信模板消息"></el-checkbox>
-            <el-checkbox label="批量发送短信消息"></el-checkbox>
-          </el-checkbox-group>
+          <el-checkbox label="批量发送微信模板消息" v-model="checkList.sendWxTemplateByBatch"></el-checkbox>
+          <el-checkbox label="批量发送短信消息" v-model="checkList.sendSmsByBatch"></el-checkbox>
         </div> 
-        <el-button type="primary" class="message-btn">保存</el-button>
+        <el-button type="primary" class="message-btn" @click="setSave">保存</el-button>
       </div>
     </div>
   </div>
@@ -63,22 +55,61 @@
 
 <script lang="ts">
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
-import {getCustomerResourceStatistics} from '@/api/common';
+import { getMemberOperatSetInfo, patchMemberOperatSetInfo } from '@/api/system-set';
 
 @Component({
 })
 export default class PoolCount extends Vue {
-  private checkList: any = [];
+  private checkList = {
+    phone: false,
+    selectConsumeRecord: false,
+    giveIntegral: false,
+    giveIntegralLimit: '',
+    giveCouponNum: '',
+    giveCoupon: false,
+    sendSms: false,
+    inviteReviews: false,
+    addFlag: false,
+    followRecord: false,
+    sendWxTemplateByBatch: false,
+    sendSmsByBatch: false
+  };
   private dateInput: string = '';
   private img: any = require('@/assets/images/android/czgn.png');
-  @Watch('checkList')
-  private onChange() {
-    console.log(this.checkList);
+  private mounted() {
+    // 查询
+    this.getSetInfo();
+  }
+  // 查询
+  private getSetInfo() {
+    getMemberOperatSetInfo().then((res: any) => {
+      if (res.code === 0) {
+        if (res.data) {
+          this.checkList = res.data;
+        }
+      } else {
+        this.$message.error(res.msg);
+      }
+    })
+  }
+  // 保存
+  private setSave() {
+    const params = this.checkList;
+    patchMemberOperatSetInfo(params).then((res: any) => {
+      if (res.code === 0) {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        });
+      } else {
+        this.$message.error(res.msg);
+      }
+    })
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .operation {
   display: flex;
   font-size: 14px;
@@ -147,6 +178,9 @@ export default class PoolCount extends Vue {
             }
             .el-input-class{
               width: 80px;
+              input{
+                text-align: center;
+              }
             }
           }
         }
