@@ -9,28 +9,26 @@
     <div class="message-right">
       <p class="title">消息提醒选择</p>
       <div class="message-checkbox">
-        <el-checkbox-group v-model="checkList">
-          <div class="message-div m-birthday-box">
-            <el-checkbox label="会员生日提醒" class="m-birthday"></el-checkbox>
-            <div class="message-date">
-              <span class="message-span">设置提醒范围：</span>
-              <el-input class="el-input-class" v-model="dateInput" @blur="chechNum"></el-input>
-              <span class="message-span-s">（支持1-30天）</span>
-            </div>
+        <div class="message-div m-birthday-box">
+          <el-checkbox label="会员生日提醒" true-label="1" false-label="0" v-model="checkList.memBirthDayRemind" class="m-birthday"></el-checkbox>
+          <div class="message-date">
+            <span class="message-span">设置提醒范围：</span>
+            <el-input class="el-input-class" v-model="checkList.remindDayLimit" @blur="chechNum" :disabled="checkList.memBirthDayRemind === '0' ? true : false"></el-input>
+            <span class="message-span-s">（支持1-30天）</span>
           </div>
-          <div class="message-div">
-            <el-checkbox label="今日定时消息任务提醒"></el-checkbox>
-          </div>
-          <div class="message-div">
-            <el-checkbox label="今日新增潜客数量提醒"></el-checkbox>
-          </div>
-          <div class="message-div">
-            <el-checkbox label="未处理消息数量提醒"></el-checkbox>
-          </div>
-          <div class="message-div">
-            <el-checkbox label="会员跟进提醒"></el-checkbox>
-          </div>
-        </el-checkbox-group>
+        </div>
+        <div class="message-div">
+          <el-checkbox label="今日定时消息任务提醒" true-label="1" false-label="0" v-model="checkList.todayWorkRemind"></el-checkbox>
+        </div>
+        <div class="message-div">
+          <el-checkbox label="今日新增潜客数量提醒" true-label="1" false-label="0" v-model="checkList.todayAddCustomNumRemind"></el-checkbox>
+        </div>
+        <div class="message-div">
+          <el-checkbox label="未处理消息数量提醒" true-label="1" false-label="0" v-model="checkList.unDoMessageNumRemind"></el-checkbox>
+        </div>
+        <div class="message-div">
+          <el-checkbox label="会员跟进提醒" true-label="1" false-label="0" v-model="checkList.memberFollowRemind"></el-checkbox>
+        </div>
         <el-button type="primary" class="message-btn" @click="saveData">保存</el-button>
       </div>
     </div>
@@ -39,35 +37,61 @@
 
 <script lang="ts">
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
-import {getCustomerResourceStatistics} from '@/api/common';
+import { getmemberMessgeRemindInfo, messgeRemindSet } from '@/api/system-set';
 
 @Component({
 })
 export default class PoolCount extends Vue {
-  private checkList: any = [];
-  private dateInput: string = '';
+  private checkList: any = {
+    memBirthDayRemind: '0',
+    memberFollowRemind: '0',
+    remindDayLimit: '1',
+    todayAddCustomNumRemind: '0',
+    todayWorkRemind: '0',
+    unDoMessageNumRemind: '0'
+  };
   private img: any = require('@/assets/images/android/xxtx.png');
-  @Watch('checkList')
-  private checkChange() {
-    console.log(this.checkList);
-  }
    // 保存
-  private saveData() {}
+  private saveData() {
+    messgeRemindSet(this.checkList).then((res: any) => {
+      if (res.code === 0) {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+      } else {
+        this.$message.error(res.msg);
+      }
+    });
+  }
   // 检验生日设置的天数
   private chechNum() {
     const reg = /^([1-9]|[1-2][0-9]|[3][0]\d?)$/;
-    if (this.dateInput === '') {
+    if (this.checkList.remindDayLimit === '') {
       return;
     }
-    if (!reg.test(this.dateInput)) {
+    if (!reg.test(this.checkList.remindDayLimit)) {
       this.$message.error('仅支持1-30天');
-      this.dateInput = '';
+      this.checkList.remindDayLimit = '1';
     }
+  }
+  private mounted() {
+    this.getmemberMessgeRemindInfo();
+  }
+  // 查询
+  private getmemberMessgeRemindInfo() {
+    getmemberMessgeRemindInfo().then((res: any) => {
+      if (res.code === 0) {
+        this.checkList = res.data ? res.data : {};
+      } else {
+        this.$message.error(res.msg);
+      }
+    });
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .message-reminder {
   display: flex;
   font-family: MicrosoftYaHei;
@@ -106,6 +130,9 @@ export default class PoolCount extends Vue {
         .el-input-class{
           display: inline-block;
           width: 70px;
+          .el-input__inner{
+            text-align: center;
+          }
         }
         .message-span-s{
           font-size: 14px;

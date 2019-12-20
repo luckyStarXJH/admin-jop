@@ -14,13 +14,13 @@
         width="60">
       </el-table-column>
       <el-table-column
-        prop="tag" 
+        prop="tagName" 
         label="标签名称"
         align="center"
         >
         <template slot-scope="scope">
-          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tag"></el-input>
-          <span v-else>{{ scope.row.tag }}</span>
+          <el-input placeholder="标签名称最长支持8个汉字" maxlength="8" v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tagName"></el-input>
+          <span v-else>{{ scope.row.tagName }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -28,20 +28,20 @@
         label="标签排序"
         align="center">
         <template slot-scope="scope">
-          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.sort"></el-input>
-          <span v-else>{{ scope.row.sort }}</span>
+          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tagSort"></el-input>
+          <span v-else>{{ scope.row.tagSort }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="isShow"
+        prop="tagStaus"
         align="center"
         label="是否展示"
         >
         <template slot-scope="scope">
-          <div v-if="scope.row.isShow">
+          <div v-if="scope.row.tagStaus === '1'">
             <i class="el-icon-success icon-size icon-success-size"></i>
           </div>
-          <div v-else>
+          <div v-else-if="scope.row.tagStaus === '0'">
             <i class="el-icon-error icon-size icon-error-size"></i>
           </div>
         </template>
@@ -58,15 +58,15 @@
             type="success"
             @click="handleSave(scope.$index, scope.row)">保存</el-button>
             <el-button
-            v-else
+            v-else-if="scope.row.tagId"
             size="mini"
             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
-            v-if="scope.row.isShow"
+            v-if="scope.row.tagStaus === '1'"
             size="mini"
             @click="handleHidden(scope.$index, scope.row)">设为隐藏</el-button>
             <el-button
-            v-else
+            v-else-if="scope.row.tagStaus === '0'"
             size="mini"
             @click="handleHidden(scope.$index, scope.row)">设为显示</el-button>
         </template>
@@ -87,16 +87,16 @@
     </div>
     <!-- 新增会员标签 -->
     <el-dialog title="新增-会员标签"  width="27%" :visible.sync="dialogFormVisible" :before-close="handleClose">
-      <el-form :model="formTag" ref="formTag">
-        <el-form-item label="标签名称：" :label-width="formLabelWidth">
-          <el-input v-model="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off" maxlength="8"></el-input>
+      <el-form :model="formTag" ref="formTag" :rules="rules">
+        <el-form-item label="标签名称：" :label-width="formLabelWidth" prop="name">
+          <el-input  v-model.trim="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off" maxlength="8"></el-input>
         </el-form-item>
-        <el-form-item label="标签默认排序：" :label-width="formLabelWidth" >
-          <el-input v-model.number="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+        <el-form-item label="标签默认排序：" :label-width="formLabelWidth" prop="sort" >
+          <el-input v-model="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
         </el-form-item>
         <el-form-item label="标签状态：" :label-width="formLabelWidth">
           <template>
-            <el-radio-group v-model="formTag.isShowValue">
+            <el-radio-group v-model="formTag.tagStaus">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
           </el-radio-group>
@@ -114,7 +114,7 @@
 
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-property-decorator';
-import { getAccountPositionList, toCreatePositionMethods, toUpdatePositionMethods, deletePositionMethods } from '@/api/system-set';
+import {listMemberTag, updateMemberTag, updateMemberTagStatus, addMemberTag} from '@/api/system-set';
 import user from '@/utils/user';
 
 @Component({
@@ -122,63 +122,49 @@ import user from '@/utils/user';
 export default class PositionTable extends Vue {
   // private accountList = [];
   private accountList = [{
-    tag: '价格敏感',
-    sort: 1,
-    isShow: true,
-  }, {
-    tag: '喜欢赠品',
-    sort: 2,
-    isShow: false,
-  }, {
-    tag: '家里有小孩',
-    sort: 3,
-    isShow: false,
+    tagStaus: '',
+    tagSort: ''
   }];
   private formTag = {
     name: '',
     sort: '',
-    isShowValue: 1,
+    tagStaus: 1,
   };
+  private rules = {
+    name: [{ required: true, message: '请输入标签名称'}],
+    sort: [{required: true, message: '请输入标签排序'}]
+  }
   // 编辑||保存标识
   private editableIndex: number = -1;
   // 设置显示隐藏标识
   private showIndex: any = '1';
   // 新增会员标签显示隐藏
   private dialogFormVisible: boolean = false;
-  private formLabelWidth: string = '120px';
+  private formLabelWidth: string = '130px';
   // 当前页
   private currentPage: number = 1;
   private pageSize: number = 10;
-  private tableTotal: number = 20;
+  private tableTotal: number = 30;
   private mounted() {
-    // this.getAccountPositionList();
+    this.listMemberTag();
   }
 
-  private getAccountPositionList() {
-    getAccountPositionList({accountId: user.serverUser.account.accountId}).then((res: any) => {
-      this.accountList = res.data ? res.data : [];
+  // 查询
+  private listMemberTag() {
+    const params = {
+      page: {
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
+      }
+    }
+    listMemberTag(params).then((res: any) => {
+      if (res.code === 0) {
+        this.accountList = res.data.list ? res.data.list : [];
+        this.tableTotal = res.data.total;
+      }
     })
   }
 
-  private createPosition() {
-    this.$prompt('', '新增-会员标签', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      inputPlaceholder: '职位',
-      inputPattern: /\S/,
-      inputErrorMessage: '职位不能为空！'
-    }).then(({ value }: any) => {
-      const params = {
-        accountId: user.serverUser.account.accountId,
-        positionName: value
-      };
-      toCreatePositionMethods(params).then((res: any) => {
-        this.getAccountPositionList();
-      })
-    }).catch(() => {
-      console.log('cancel')
-    });
-  }
   // 编辑
   private handleEdit(index: number, item: any) {
     this.editableIndex = index;
@@ -186,36 +172,104 @@ export default class PositionTable extends Vue {
   // 保存
   private handleSave(index: number, item: any) {
     this.editableIndex = -1;
+    updateMemberTag(item).then((res: any) => {
+      if (res.code === 0) {
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        })
+      }
+    });
   }
   // 设置显示隐藏
   private handleHidden(index: any, item: any) {
-    this.accountList[index].isShow = !item.isShow;
+    // this.accountList.tagStaus = !item.tagStaus;
+    console.log(item);
+    let tStatus = '';
+    if (item.tagStaus === '1') {
+      tStatus = '0';
+    } else {
+      tStatus = '1';
+    }
+    updateMemberTagStatus({tagStaus: tStatus, tagId: item.tagId}).then((res: any) => {
+      if (res.code === 0) {
+        if (item.tagStaus === '1') {
+          this.accountList[index].tagStaus = '0';
+        } else {
+          this.accountList[index].tagStaus = '1';
+        }
+        this.$message({
+          message: res.msg,
+          type: 'success'
+        });
+      }
+    });
   }
   // 每页
   private handleSizeChange(val: any) {
-    console.log(`每页 ${val} 条`);
+    this.listMemberTag();
   }
   // 当前页
   private handleCurrentChange(val: any) {
-    console.log(`当前页: ${val}`);
+    this.listMemberTag();
   }
   // 关闭弹窗
   private handleClose() {
     this.formTag = {
       name: '',
       sort: '',
-      isShowValue: 1,
+      tagStaus: 1,
     }
     this.dialogFormVisible = false;
+    this.removeRule();
   }
-  // 弹窗点击确定
+  private blurFun() {
+    const ele: any = this.$refs.formTag;
+    if (this.formTag.name !== '') {
+      const ele: any = this.$refs.formTag;
+      // ele.clearValidate('tagName'); // 移除校验结果
+      ele.clearValidate('tagName');
+    }
+    if (this.formTag.sort !== '') {
+      // ele.clearValidate('tagSort'); // 移除校验结果
+      ele.clearValidate(); // 移除校验结果
+    }
+  }
+  // 去除验证结果
+  private removeRule() {
+    const ele: any = this.$refs.formTag;
+    ele.resetFields();
+  }
+  // 添加会员标签
   private updateBasisData() {
-    this.handleClose();
-    (this.$refs as any).formTag.validate((valid: boolean) => {
-      console.log(valid);
+    const params = {
+      tagLimitSize: 30,
+      tagName: this.formTag.name,
+      tagStaus: this.formTag.tagStaus,
+      tagSort: this.formTag.sort,
+    }
+    const ele: any = this.$refs.formTag;
+    ele.validate((valid: any, obj: any) => {
+      if (!valid) {
+        return false;
+      }
+    })
+    if (this.formTag.name === '' || this.formTag.sort === '') {
+      return;
+    } else {
+     this.removeRule();
+    }
+    addMemberTag(params).then((res: any) => {
+      if (res.code === 0) {
+        this.handleClose();
+        this.$message({
+          type: 'success',
+          message: res.msg
+        });
+        this.listMemberTag();
+      }
     });
   }
-
 }
 </script>
 

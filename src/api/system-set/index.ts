@@ -270,6 +270,22 @@ export function updateAccountByBatch(data: any) {
   })
 }
 // 会员管理
+// 消息提醒类型设置--查询
+export function getmemberMessgeRemindInfo() {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/getmemberMessgeRemindInfo`,
+    method: `POST`,
+    data: {}
+  })
+}
+// 消息提醒类型设置--新增修改
+export function messgeRemindSet(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/messgeRemindSet`,
+    method: `POST`,
+    data
+  })
+}
 // 操作功能设置--查询
 export function getMemberOperatSetInfo() {
   return request({
@@ -282,6 +298,38 @@ export function getMemberOperatSetInfo() {
 export function patchMemberOperatSetInfo(data: any) {
   return request({
     url: `${jopWXBaseUrl}/wxMemberManager/patchMemberOperatSetInfo`,
+    method: `POST`,
+    data
+  })
+}
+// 查询会员标签
+export function listMemberTag(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/listMemberTag`,
+    method: `POST`,
+    data
+  })
+}
+// 修改会员标签
+export function updateMemberTag(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/updateMemberTag`,
+    method: `POST`,
+    data
+  })
+}
+// 修改会员标签状态
+export function updateMemberTagStatus(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/updateMemberTagStatus`,
+    method: `POST`,
+    data
+  })
+}
+// 添加会员标签
+export function addMemberTag(data: any) {
+  return request({
+    url: `${jopWXBaseUrl}/wxMemberManager/addMemberTag`,
     method: `POST`,
     data
   })
