@@ -154,7 +154,7 @@ export default class AppointOnline extends Vue {
   }
 
   private copuText(item: any) {
-    return `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=wx_member&childPage=app-online`;
+    return `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=wx_member&childPage=app-online`;
   }
 
   private copyItemLink(item: any) {

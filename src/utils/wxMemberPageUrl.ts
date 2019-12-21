@@ -1,6 +1,6 @@
 import user from '@/utils/user';
 
-const base = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`;
+const base = `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`;
 // const webUrlMap = new Map();
 
 // webUrlMap.set('微商城', {page: 'wx_mall', childPage: ''});
@@ -48,7 +48,7 @@ const webUrlMap = {
 export function computedWebUrl(page: string): string {
   const item = (webUrlMap as any)[page];
   if (item.secondaryPage) {
-    return `${process.env.VUE_APP_BASE_API}/${item.page}/${item.secondaryPage}`;
+    return `${VUE_APP_BASE_API}/${item.page}/${item.secondaryPage}`;
   }
   if (item.childPage) {
     return `${base}&page=${item.page}&childPage=${item.childPage}`;

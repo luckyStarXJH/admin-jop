@@ -362,7 +362,7 @@ export default class MenuSetting extends Vue {
     appid: '',
     pagepath: '',
     secret: '',
-    url: `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`
+    url: `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`
   };
 
   // 关键词
@@ -788,7 +788,7 @@ export default class MenuSetting extends Vue {
   // 确定选中路径
   private URLPoupOk() {
     if (typeof(this.webUrl) === 'number') {
-      this.form.url = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=wx_member&childPage=consult-details/${this.webUrl}`;
+      this.form.url = `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=wx_member&childPage=consult-details/${this.webUrl}`;
     };
     if (typeof(this.webUrl) === 'string') {
       this.form.url = computedWebUrl(this.webUrl);

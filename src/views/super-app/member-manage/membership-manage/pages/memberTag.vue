@@ -28,7 +28,7 @@
         label="标签排序"
         align="center">
         <template slot-scope="scope">
-          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tagSort"></el-input>
+          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tagSort" @keyup.native="number(scope.$index)" maxlength="2"></el-input>
           <span v-else>{{ scope.row.tagSort }}</span>
         </template>
       </el-table-column>
@@ -92,7 +92,7 @@
           <el-input  v-model.trim="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off" maxlength="8"></el-input>
         </el-form-item>
         <el-form-item label="标签默认排序：" :label-width="formLabelWidth" prop="sort" >
-          <el-input v-model="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+          <el-input v-model="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" maxlength="2"></el-input>
         </el-form-item>
         <el-form-item label="标签状态：" :label-width="formLabelWidth">
           <template>
@@ -164,7 +164,11 @@ export default class PositionTable extends Vue {
       }
     })
   }
-
+  // 只能输入正整数
+  private number(index: number) {
+    this.accountList[index].tagSort = this.accountList[index].tagSort.replace(/[^\.\d]/g, '');
+    this.accountList[index].tagSort = this.accountList[index].tagSort.replace('.', '');
+  }
   // 编辑
   private handleEdit(index: number, item: any) {
     this.editableIndex = index;
@@ -184,7 +188,6 @@ export default class PositionTable extends Vue {
   // 设置显示隐藏
   private handleHidden(index: any, item: any) {
     // this.accountList.tagStaus = !item.tagStaus;
-    console.log(item);
     let tStatus = '';
     if (item.tagStaus === '1') {
       tStatus = '0';
@@ -222,18 +225,6 @@ export default class PositionTable extends Vue {
     }
     this.dialogFormVisible = false;
     this.removeRule();
-  }
-  private blurFun() {
-    const ele: any = this.$refs.formTag;
-    if (this.formTag.name !== '') {
-      const ele: any = this.$refs.formTag;
-      // ele.clearValidate('tagName'); // 移除校验结果
-      ele.clearValidate('tagName');
-    }
-    if (this.formTag.sort !== '') {
-      // ele.clearValidate('tagSort'); // 移除校验结果
-      ele.clearValidate(); // 移除校验结果
-    }
   }
   // 去除验证结果
   private removeRule() {

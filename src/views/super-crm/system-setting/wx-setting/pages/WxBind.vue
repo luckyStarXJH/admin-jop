@@ -161,7 +161,7 @@ export default class WxBind extends Vue {
   }
 
   private async getPerssionInfo() {
-    const params = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wtppa/check_auth/${user.serverUser.account.companyKey}`;
+    const params = `${VUE_APP_BASE_API}/wx-interface-web/wtppa/check_auth/${user.serverUser.account.companyKey}`;
     const res = await ajaxMethods(params);
     if ((res as any).code === 0) {
       this.isGet = false;
@@ -177,7 +177,7 @@ export default class WxBind extends Vue {
     this.$nextTick(() => {
       const params = {
         element: document.getElementById('canvas-qr'),
-        value: `${process.env.VUE_APP_BASE_API}/wx-interface-web/wtppa/auth/${user.serverUser.account.companyKey}?t=wx`,
+        value: `${VUE_APP_BASE_API}/wx-interface-web/wtppa/auth/${user.serverUser.account.companyKey}?t=wx`,
         size: 240
       };
       const qRious = new QRious(params);

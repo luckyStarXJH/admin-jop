@@ -993,7 +993,7 @@ export default class AddPackage extends Vue {
 
   // 上传图片路径
   private uploadUrl(): string {
-    return `${process.env.VUE_APP_BASE_API}/jop-wx-web/memberCard/uploadCardImg`;
+    return `${VUE_APP_BASE_API}/jop-wx-web/memberCard/uploadCardImg`;
   }
 
   private uploadLogoSuccess(res: any) {
@@ -1193,13 +1193,13 @@ export default class AddPackage extends Vue {
       promotion_url: data.bottomInfo3.infoShow ? data.bottomInfo3.url : '',
       promotion_url_sub_title: data.bottomInfo3.infoShow ? data.bottomInfo3.title : '',
       supply_bonus: data.supply_bonus,
-      bonus_url: `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=score-record`,
+      bonus_url: `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=score-record`,
       prerogative: data.detailsInfo.prerogative,
       bonus_rules: '',
       discount: data.detailsInfo.discount || '0',
       givefriend: data.givefriend,
       isshare: '0',
-      activate_url: `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=active`,
+      activate_url: `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=active`,
       cost_money_unit: data.detailsInfo.cost_money_unit,
       increase_bonus: data.detailsInfo.increase_bonus,
       max_increase_bonus: data.detailsInfo.max_increase_bonus,

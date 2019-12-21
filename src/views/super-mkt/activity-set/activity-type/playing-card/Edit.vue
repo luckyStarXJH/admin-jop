@@ -8,7 +8,7 @@
         </div>
         <p style="text-align: center;color: #fff;font-size: 12px;">
           活动时间：{{dateValue.startTime}}
-          <br /> 
+          <br />
           至{{dateValue.endTime}}
         </p>
       </div>
@@ -16,7 +16,15 @@
     <div class="edit-from-view">
       <div class="nav-bar">
         <el-tabs v-model="tabname">
-          <el-tab-pane label="基本设置" name="first">
+          <el-tab-pane label="奖品设置" name="first">
+            <GiftSetPage
+              :lineSize="6"
+              :getDataFunc="getGiftSetDataFuncObj"
+              @initGiftList="changeActive"
+            ></GiftSetPage>
+          </el-tab-pane>
+
+          <el-tab-pane label="基本设置" name="second">
             <BasicSet
               @changetabName="changetabName"
               @bannerImage="changeImage"
@@ -24,23 +32,36 @@
               @changeActiveTheme="changeActiveTheme"
             ></BasicSet>
           </el-tab-pane>
+          <!-- <el-tab-pane label="基本设置" name="first">
+            <BasicSet
+              @changetabName="changetabName"
+              @bannerImage="changeImage"
+              @dateChange="dateChange"
+              @changeActiveTheme="changeActiveTheme"
+            ></BasicSet>
+          </el-tab-pane>-->
 
           <!-- <el-tab-pane label="奖品设置" name="second">
             <GiftSet :tabname="tabname" @changetabName="changetabName" @changeActive="changeActive"></GiftSet>
           </el-tab-pane>-->
-          <el-tab-pane label="奖品设置" name="second">
+          <!-- <el-tab-pane label="奖品设置" name="second">
             <GiftSetPage
               :lineSize="6"
               :getDataFunc="getGiftSetDataFuncObj"
               @initGiftList="changeActive"
             ></GiftSetPage>
-          </el-tab-pane>
+          </el-tab-pane>-->
+
           <el-tab-pane label="门店设置" name="third">
             <ShopSet :tabname="tabname" @changetabName="changetabName"></ShopSet>
           </el-tab-pane>
 
           <el-tab-pane label="分享设置" name="fourth">
             <ShareSet></ShareSet>
+          </el-tab-pane>
+
+          <el-tab-pane label="营销推广" name="five">
+            <spread-setPage :getDataFunc="getSpreadSetDataFuncObj"></spread-setPage>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -54,20 +75,33 @@ import {
   productsSave,
   queryActiveAndJmpGift
 } from '@/api/super-mkt/activity-set/nine'
+import { queryActive, updateScheme } from '@/api/super-mkt/activity-set/tiger'
 import BasicSet from './BasicSet.vue'
 import GiftSet from './giftSet'
 import ShopSet from './shopSet.vue'
 import ShareSet from './shareSet'
 import moment from 'moment'
 import GiftSetPage from '@/views/super-mkt/activity-set/activity-type/set-template/active-set/GiftSet'
+import SpreadSetPage from '../set-template/active-set/Spread'
 export default {
-  components: { BasicSet, ShopSet, ShareSet, GiftSet, GiftSetPage },
+  components: {
+    BasicSet,
+    ShopSet,
+    ShareSet,
+    GiftSet,
+    GiftSetPage,
+    SpreadSetPage
+  },
   data() {
     return {
       getGiftSetDataFuncObj: {
         queryProducts,
         productsSave,
         queryActiveAndJmpGift
+      },
+      getSpreadSetDataFuncObj: {
+        queryActive,
+        updateScheme
       },
       activeTheme: '',
       tabname: 'first',

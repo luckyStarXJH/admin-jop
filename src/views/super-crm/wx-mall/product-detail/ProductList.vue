@@ -20,6 +20,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="商品编号：">
+          <el-input
+            v-model="formData.code"
+            placeholder="编号支持模糊查询"
+          >
+          </el-input>
+        </el-form-item>
         <el-button
           type="primary"
           @click="getTableData"
@@ -168,6 +175,7 @@ export default class WxCredentialCredentialParameter extends Vue {
   formData = {
     keyword: '',
     jewelryLargeCategory: '',
+    code: ''
   };
 
   total = 0;
@@ -223,6 +231,7 @@ export default class WxCredentialCredentialParameter extends Vue {
       const body = {
         jewelryLargeCategoryList: this.formData.jewelryLargeCategory ? [this.formData.jewelryLargeCategory] : [],
         keyword: this.formData.keyword,
+        code: this.formData.code,
         pageSize: onlyData ? 99999 : this.pageSize,
         pageNum: this.pageNum,
       }
@@ -312,7 +321,7 @@ export default class WxCredentialCredentialParameter extends Vue {
   async copyLink(row: any) {
     try {
       if (user.serverUser) {
-        const origin = process.env.VUE_APP_BASE_API;
+        const origin = VUE_APP_BASE_API;
         const companyKey = user.serverUser.account.companyKey
         const url = `${origin}/wx-interface-web/wx/auth?companyKey=${companyKey}&page=wx_mall&childPage={"path":"/home/product-detail/${row.code}"}`
         copyText(encodeURI(url));

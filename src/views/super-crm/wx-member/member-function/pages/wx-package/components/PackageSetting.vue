@@ -142,7 +142,7 @@ export default class PackageSetting extends Vue {
       document.body.removeChild(oldInput);
     }
     const oInput = document.createElement('input');
-    oInput.value = `${process.env.VUE_APP_BASE_API}/login_register/pick_package/?c=${user.serverUser.account.companyKey}`;
+    oInput.value = `${VUE_APP_BASE_API}/login_register/pick_package/?c=${user.serverUser.account.companyKey}`;
     oInput.id = 'copy-input';
     oInput.style.opacity = '0';
     document.body.appendChild(oInput);

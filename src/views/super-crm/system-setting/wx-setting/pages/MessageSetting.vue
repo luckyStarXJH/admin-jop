@@ -239,7 +239,7 @@ export default class MessageSetting extends Vue {
     this.bodyMsgColor.forEach((p: string, index: number) => {
       (filedColor as any)[`keyword${index + 1}`] = p;
     });
-    const wxUrl = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`;
+    const wxUrl = `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}`;
     const templateUrl = this.form.urlType === '1' ? wxUrl : (this.form.urlType === '2' ? this.form.templateUrl : null);
     const params = {
       startDescribtion: this.form.startMsg,

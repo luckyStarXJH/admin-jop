@@ -4,7 +4,7 @@
       <li class="info-col">
         <span class="lable">活动主题图：</span>
         <div class="row2">
-          <el-upload 
+          <el-upload
             class="upload-demo"
             action
             :show-file-list="false"
@@ -69,6 +69,11 @@
           <el-radio v-model="form.isMember" label="0" @change="isMemberStatus($event)">仅限会员</el-radio>
         </div>
       </li>
+      <li class="degree" v-show="!readonlyStatus">
+        <el-checkbox-group v-model="checkList">
+          <el-checkbox v-for="item in memberGrade" :label="item" :key="item"></el-checkbox>
+        </el-checkbox-group>
+      </li>
 
       <li class="info-col">
         <span class="lable">消耗积分：</span>
@@ -89,6 +94,43 @@
       </li>
 
       <li class="info-col">
+        <span class="lable">总参与次数：</span>
+        <div class="row2">
+          <el-radio v-model="isNum" label="1">
+            活动期间可参数总次数
+            <input
+              type="number"
+              min="0"
+              @input="inputFun"
+              class="RateNum num-input"
+              data-type="totalNum"
+              v-model="totalNum"
+            />次
+          </el-radio>
+          <el-radio v-model="isNum" label="0" @change="infinit">不限制总次数</el-radio>
+        </div>
+      </li>
+      <li class="info-col">
+        <span class="lable">每天参与次数：</span>
+        <div class="row2">
+          <span class="lable">每天可抽奖</span>
+          <input class="diy-input" type="number" min="1" v-model="participateNum" />
+          <span class="lable">次</span>
+          <span class="tip">（每天参与次数不能大于总参与次数）</span>
+        </div>
+      </li>
+
+      <li class="info-col">
+        <span class="lable">中奖次数限制：</span>
+        <div class="row2">
+          <span class="lable">每人最多可中奖</span>
+          <input class="diy-input" type="number" min="1" v-model="maxWinning" />
+          <span class="lable">次</span>
+          <span class="tip">（请输入≥的整数倍）</span>
+        </div>
+      </li>
+
+      <!-- <li class="info-col">
         <span class="lable">参与次数限制：</span>
         <div class="row2">
           <el-radio v-model="form.isNum" label="0">每天可抽奖</el-radio>
@@ -110,7 +152,7 @@
           />次
           <el-radio v-model="form.isNum" label="1" class="rg-radio" @change="Nolimit">不限制参与次数</el-radio>
         </div>
-      </li>
+      </li>-->
 
       <li class="info-col">
         <span class="lable">售后设置：</span>
@@ -145,6 +187,7 @@ import {
   uploadBgImg,
   queryActive
 } from '@/api/super-mkt/activity-set/nine'
+import { queryMemberGrade } from '@/api/super-mkt/spread-set/set-plan'
 import WangEditor from '@/components/WangEditor.vue'
 import moment from 'moment'
 import { mapMutations, mapState } from 'vuex'
@@ -160,6 +203,12 @@ export default {
       dateValue: [], // 日期
       TimestampNowDate: '', // 当前时间
       editContext: '',
+      memberGrade: [], // 会员等级
+      checkList: [], // 选中会员
+      totalNum: 1, // 游戏总抽奖次数
+      isNum: '1', // 是否限制抽奖次数
+      participateNum: 1, // 每天可抽奖次数
+      maxWinning: 1, // 这大中奖次数
       imgName:
         'http://www.jqzjop.com/ftp_images/01/market/45c0f3fecc9e41dd.jpg',
       form: {
@@ -206,12 +255,25 @@ export default {
       const Val = e.target.value
       this.$emit('changeActiveTheme', Val)
     },
+    getQueryMemberGrade(data) {
+      queryMemberGrade(data).then(res => {
+        const data = res.data
+        this.memberGrade = data
+      })
+    },
     setqueryActive(Data) {
       queryActive(Data)
-        .then((res) => {
+        .then(res => {
           const { code, data, msg } = res
           if (code == 0) {
             this.form = Object.assign(this.form, data)
+            this.checkList = data.grade ? data.grade.split(',') : []
+            this.isNum = data.isNum ? String(data.isNum) : '1'
+            this.totalNum = data.totalNum ? Number(data.totalNum) : 1
+            this.participateNum = data.participateNum
+              ? Number(data.participateNum)
+              : 1
+            this.maxWinning = data.maxWinning ? Number(data.maxWinning) : 1
             const dateValue = {
               startTime: moment(data.beginTime).format('YYYY-MM-DD HH:mm:ss'),
               endTime: moment(data.endTime).format('YYYY-MM-DD HH:mm:ss')
@@ -265,7 +327,7 @@ export default {
       formData.append('file', file)
       formData.append('alias', 'market')
       uploadBgImg(formData)
-        .then((res) => {
+        .then(res => {
           const { data, code, msg } = res
           if (code == 0) {
             this.form.imgName = res.data[0]
@@ -301,6 +363,9 @@ export default {
     Nolimit() {
       // 参与次数限制
       this.form.participateNum = ''
+    },
+    infinit() {
+      this.totalNum = 1
     },
     isMemberStatus($event) {
       if ($event == 0) {
@@ -366,6 +431,60 @@ export default {
     submitBasicSet() {
       // 表单提交以及表单校验
       this.form.rule = this.$refs.ue.getContent()
+
+      if (!this.readonlyStatus && this.checkList.length === 0) {
+        this._Alert('请选中参与活动的会员等级', '可参与用户')
+        return false
+      } else {
+        this.form.grade = this.checkList.join(',')
+      }
+
+      if (String(this.isNum) === '1' && Number(this.totalNum) < 1) {
+        this._Alert('请设置活动期间可参与总次数', '总参与次数')
+        return false
+      } else {
+        this.form.totalNum = this.totalNum
+      }
+
+      if (
+        String(this.isNum) === '1' &&
+        Number(this.participateNum) > Number(this.totalNum)
+      ) {
+        this._Alert('每天抽奖次数不可大于活动期间可参与总次数', '每天参与次数')
+        return false
+      } else {
+        this.form.participateNum = this.participateNum
+      }
+
+      if (
+        this.isNum === '1' &&
+        Number(this.maxWinning) > Number(this.totalNum)
+      ) {
+        this._Alert(
+          '每人最多可中奖次数不可大于活动期间可参与总次数',
+          '中奖次数限制'
+        )
+        return false
+      } else {
+        this.form.maxWinning = this.maxWinning
+      }
+
+      if (
+        String(this.isNum) === '0' &&
+        Number(this.participateNum) < Number(this.maxWinning)
+      ) {
+        this._Alert('中奖次数不可超过每天参与次数', '中奖次数限制')
+        return false
+      } else {
+        this.form.totalNum = this.totalNum
+      }
+
+      if (String(this.isNum) === '0') {
+        this.form.totalNum = null
+      }
+
+      this.form.isNum = this.isNum
+
       if (this.isJmpGift == 1) {
         return false
       } else if (this.form.rule == '') {
@@ -390,9 +509,10 @@ export default {
         )
         return false
       } else {
-        if (this.form.isNum == '1') {
-          this.form.participateNum = '0'
-        }
+        // console.log('这里是否限制参与次数', this.form.isNum)
+        // if (this.form.isNum == '1') {
+        //   this.form.participateNum = '0'
+        // }
         this.form.beginTime = moment(this.dateValue[0]).format(
           'YYYY-MM-DD HH:mm:ss'
         )
@@ -407,8 +527,10 @@ export default {
           background: 'rgba(0, 0, 0, 0.7)'
         })
 
+        console.log(this.form, '这里去提交的数据', this.totalNum)
+
         basicUpdate(this.form)
-          .then((res) => {
+          .then(res => {
             const { code, dada, msg } = res
             if (code == 0) {
               loading.close()
@@ -426,7 +548,7 @@ export default {
     },
     inputFun(e) {
       // 此方法校验输入框
-      const input = e.target;
+      const input = e.target
       const Val = input.value
       const reg = /(^[0-9]+$)|(^\s*$)/
       const That = input.getAttribute('data-type')
@@ -436,7 +558,7 @@ export default {
       }
       this.timer = setTimeout(() => {
         if (!reg.test(Val)) {
-          input.value = '';
+          input.value = ''
         }
       }, 500)
     },
@@ -457,6 +579,12 @@ export default {
           : this.singleActiveData.imgName
       this.$emit('changeActiveTheme', this.singleActiveData.activeTheme)
     }
+
+    const options = {
+      activeId: id
+    }
+
+    this.getQueryMemberGrade(options)
   },
   // 生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
@@ -484,6 +612,16 @@ export default {
 
         .el-upload__tip {
           margin-left: 20px;
+        }
+
+        .diy-input {
+          width: 74px;
+          height: 38px;
+          border-radius: 5px;
+          border: solid 1px #dcdfe6;
+          margin: 0 5px;
+          outline: none;
+          text-align: center;
         }
 
         .num-input {
@@ -533,6 +671,19 @@ export default {
       letter-spacing: 1px;
       color: #606266;
       min-width: 90px;
+    }
+    .degree {
+      width: 721px;
+      height: 45px;
+      line-height: 45px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding-left: 20px;
+      margin-left: 110px;
+    }
+    .tip {
+      font-size: 12px;
+      color: #999;
     }
   }
   .submit {

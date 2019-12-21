@@ -31,6 +31,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="商品编号：">
+          <el-input
+            v-model="form.code"
+            placeholder="编号支持模糊查询"
+          >
+          </el-input>
+        </el-form-item>
         <el-button
           type="primary"
           @click="getTableData"
@@ -170,6 +177,7 @@ export default class PointMallProductDetailEditProductList extends Vue {
     category: '',
     proInfo: '',
     status: '',
+    code: ''
   };
 
   total = 0;
@@ -334,7 +342,7 @@ export default class PointMallProductDetailEditProductList extends Vue {
   async copyLink(row: any) {
     try {
       if (user.serverUser) {
-        const origin = process.env.VUE_APP_BASE_API;
+        const origin = VUE_APP_BASE_API;
         const companyKey = user.serverUser.account.companyKey
         const url = `${origin}/wx-interface-web/wx/auth?companyKey=${companyKey}&page=wx_point_mall&childPage={"path":"/product-detail","query":{"id":"${row.code}"}}`
 

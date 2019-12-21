@@ -91,7 +91,7 @@ export default class AdminPassword extends Vue {
   }
 
   private imgSrcClick() {
-    this.imgSrc = `${process.env.VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.userData.phone}?${Math.random()}`;
+    this.imgSrc = `${VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.userData.phone}?${Math.random()}`;
   }
 
   private getCompanyInfo() {

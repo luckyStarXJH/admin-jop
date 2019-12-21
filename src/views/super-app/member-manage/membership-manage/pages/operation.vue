@@ -7,7 +7,7 @@
     </div>
     <!-- 聊天功能开关 -->
     <div class="message-right">
-      <div class="title">聊天功能开关<span>功能开关统一管理。关闭后，所有APP账号均不可使用。单独控制请使用<a href class="operation-go">系统设置-账号管理</a></span></div>
+      <div class="title">聊天功能开关<span>功能开关统一管理。关闭后，所有APP账号均不可使用。单独控制请使用<a href='#' @click.prevent="goRoute" class="operation-go">系统设置-账号管理</a></span></div>
       <div class="opertion-content">
         <div class="content-item">
           <p class="content-title">敏感信息设置</p>
@@ -79,6 +79,11 @@ export default class PoolCount extends Vue {
   private mounted() {
     // 查询
     this.getSetInfo();
+  }
+  private goRoute() {
+    this.$router.push({
+      path: '/system-set/user-set/user-control/account-manage'
+    });
   }
   // 查询
   private getSetInfo() {

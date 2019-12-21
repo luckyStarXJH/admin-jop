@@ -6,7 +6,7 @@
     <div class="setting-group">
       <el-form
         v-model="formData"
-        label-width="120px" 
+        label-width="120px"
       >
         <el-form-item
           label="页面标题"
@@ -168,6 +168,20 @@
           </el-table>
         </el-form-item>
         <el-form-item
+          v-if="formData.shopCloud"
+          label="显示微客服"
+        >
+          <el-checkbox
+            v-for="(item, index) of formData.shopCloud"
+            :key="index"
+            :true-label="1"
+            :false-label="0"
+            v-model="item.enable"
+          >
+            {{item.name}}
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item
           label=""
         >
           <el-button
@@ -206,7 +220,8 @@ export default class WxMallPageSet extends Vue {
     logoFileList: any[],
     logoUrl: string,
     themeColor: string,
-    carouselTableData: any[]
+    carouselTableData: any[],
+    shopCloud: null | any[]
   } = {
     title: '微商城',
     logoFileList: [],
@@ -228,6 +243,7 @@ export default class WxMallPageSet extends Vue {
         clickType: 'code',
       },
     ],
+    shopCloud: []
   }
 
   mounted() {
@@ -310,6 +326,7 @@ export default class WxMallPageSet extends Vue {
           companyLogo,
           themeColor,
           banners,
+          shopCloud
         } = data;
 
         this.formData.title = title;
@@ -323,8 +340,8 @@ export default class WxMallPageSet extends Vue {
         }
 
         this.formData.themeColor = themeColor;
+        this.formData.shopCloud = shopCloud;
 
-        console.log(this.formData.themeColor)
         this.formData.carouselTableData = banners.map((item: any, index: number) => {
           item.isShow = item.isShow === '1' ? true : false;
 
@@ -345,7 +362,8 @@ export default class WxMallPageSet extends Vue {
         title,
         logoUrl,
         themeColor,
-        carouselTableData
+        carouselTableData,
+        shopCloud
       } = this.formData;
 
       function bannersFormat() {
@@ -361,6 +379,7 @@ export default class WxMallPageSet extends Vue {
         companyLogo: logoUrl,
         themeColor,
         banners: bannersFormat(),
+        shopCloud
       }
 
       setPageStyle(body).then((res: any) => {

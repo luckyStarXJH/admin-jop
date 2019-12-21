@@ -133,7 +133,7 @@ export default class GoldPricePageStyle extends Vue {
   }
 
   get uploadUrl() {
-    return `${process.env.VUE_APP_BASE_API}/jop-wx-web/adTv/uploadTvLogo`;
+    return `${VUE_APP_BASE_API}/jop-wx-web/adTv/uploadTvLogo`;
   }
 
   get opt() {

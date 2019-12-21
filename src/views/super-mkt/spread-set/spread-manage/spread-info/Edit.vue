@@ -95,7 +95,7 @@ import {
 export default {
   data() {
     return {
-      baseURL: process.env.VUE_APP_BASE_API,
+      baseURL: VUE_APP_BASE_API,
       uploadHeaders: {
         ticket: user.serverUser.ticket,
         companyKey: user.serverUser.account.companyKey,

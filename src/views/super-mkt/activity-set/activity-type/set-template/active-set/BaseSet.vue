@@ -5,7 +5,7 @@
         <el-col :span="8">
           <el-upload
             :headers="uploadHeaders"
-            :before-upload="checkPicture" 
+            :before-upload="checkPicture"
             :on-success="uploadPicSuccess"
             :file-list="form.fileList"
             :action="baseURL+'\/jop-marketing-web\/market\/upload'"
@@ -40,10 +40,18 @@
       </el-form-item>
       <el-form-item label="可参与用户：">
         <el-radio-group v-model="form.isMember">
-          <el-radio label="1">所有用户</el-radio>
-          <el-radio label="0">仅限会员</el-radio>
+          <el-radio label="0">所有用户</el-radio>
+          <el-radio label="1">仅限会员</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item>
+        <li class="degree" v-show="form.isMember === '1'" style="listStyle:none">
+          <el-checkbox-group v-model="checkList">
+            <el-checkbox v-for="item in form.memberGrade" :label="item" :key="item"></el-checkbox>
+          </el-checkbox-group>
+        </li>
+      </el-form-item>
+
       <el-form-item label="消耗积分：" v-if="form.isMember === '0'">
         <el-row :gutter="20">
           <el-col :span="2.5">
@@ -59,7 +67,43 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="参与次数限制：">
+
+      <el-form-item label="总参与次数：">
+        <el-radio-group class="row2" v-model="form.isNum">
+          <el-radio label="1">
+            活动期间可参数总次数
+            <input
+              type="number"
+              min="0"
+              @input="inputFun"
+              class="RateNum num-input diy-input"
+              data-type="totalNum"
+              v-model="form.totalNum"
+            />次
+          </el-radio>
+          <el-radio label="0">不限制总次数</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item label="每天参与次数：">
+        <div class="row2">
+          <span class="lable">每天可抽奖</span>
+          <input class="diy-input" type="number" min="1" v-model="form.participateNum" />
+          <span class="lable">次</span>
+          <span class="tip">（每天参与次数不能大于总参与次数）</span>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="中奖次数限制：">
+        <div class="row1">
+          <span class="lable">每人最多可中奖</span>
+          <input class="diy-input" type="number" min="1" v-model="form.maxWinning" />
+          <span class="lable">次</span>
+          <span class="tip">（请输入≥的整数倍）</span>
+        </div>
+      </el-form-item>
+
+      <!-- <el-form-item label="参与次数限制：">
         <el-row :gutter="20">
           <div class="info-col">
             <div class="row2">
@@ -83,8 +127,8 @@
               <el-radio v-model="form.isNum" label="1" class="rg-radio" @change="Nolimit">不限制参与次数</el-radio>
             </div>
           </div>
-        </el-row>
-        <!-- <el-row :gutter="20">
+      </el-row>-->
+      <!-- <el-row :gutter="20">
           <el-col :span="4">
             <el-input
               v-model="form.participateNum"
@@ -93,8 +137,8 @@
             ></el-input>
           </el-col>
           <el-checkbox v-model="form.isNum" true-label="1" false-label="0">不限制参与次数</el-checkbox>
-        </el-row> -->
-      </el-form-item>
+      </el-row>-->
+      <!-- </el-form-item> -->
       <el-form-item label="售后设置：">
         <el-row :gutter="20">
           <el-col :span="6">
@@ -118,6 +162,7 @@
 </template>
 
 <script>
+import { queryMemberGrade } from '@/api/super-mkt/spread-set/set-plan'
 import user from '@/utils/user'
 import WangEditor from '@/components/WangEditor'
 export default {
@@ -137,7 +182,7 @@ export default {
   watch: {
     'form.isNum'(flag) {
       if (flag === '1') {
-        this.form.participateNum = 0
+        // this.form.participateNum = 0
       }
     }
   },
@@ -155,12 +200,13 @@ export default {
           }
         ]
       },
-      baseURL: process.env.VUE_APP_BASE_API,
+      baseURL: VUE_APP_BASE_API,
       uploadHeaders: {
         ticket: user.serverUser.ticket,
         companyKey: user.serverUser.account.companyKey,
         accountId: user.serverUser.account.accountId
       },
+      checkList: [], // 选中会员
       form: {
         id: '',
         jmpId: 130,
@@ -174,35 +220,95 @@ export default {
         isPaused: '1', // 活动状态
         isMember: '1', // 可参与用户值
         consumeIntegral: 0, // 消耗积分值
-        participateNum: '', // 参与次数限制值
-        isNum: true, // 是否限制游戏次数
+        participateNum: '', // 每天可抽奖次数
+        isNum: 1, // 是否限制游戏次数
         serviceAddr: '', // 地址
         servicePhone: '', // 号码
         rule: '', // 活动规则
+        memberGrade: [], // 会员等级
+        dayCount: 1, // 每天可抽奖次数
+        totalNum: 1, // 总参与次数
+        maxWinning: 1, // 每人最多可中奖次数
         fileList: [
           {
             name: '默认主题图',
             url: 'http://www.jqzjop.com/ftp_images/01/null/9b8b5af480ce4d22.jpg'
           }
-        ],
-        totalNum: 0
+        ]
       }
     }
+  },
+  created() {
+    const { id } = this.$route.query
+    const options = {
+      activeId: id
+    }
+    this.getQueryMemberGrade(options)
   },
   mounted() {
     this._getActiveSet()
   },
   methods: {
+    _Alert(msg, title) {
+      // 提示框
+      this.$alert(msg, title, {
+        confirmButtonText: '确定',
+        callback: action => {
+          return
+        }
+      })
+    },
+    getQueryMemberGrade(data) {
+      queryMemberGrade(data).then(res => {
+        const data = res.data
+        this.form.memberGrade = data
+      })
+    },
     async onSubmit() {
+      const flag = Number(this.form.isNum)
+      const totalNum = Number(this.form.totalNum)
+      const participateNum = Number(this.form.participateNum)
+      const maxWinning = Number(this.form.maxWinning)
+      const isMember = Number(this.form.isMember)
+      const checkList = this.checkList
+
+      const titleDay = '每天参与次数'
+      const titleTotal = '每天参与次数不能超过总参与次数'
+      const titleCount = '最大中奖次数'
+      const titleMaxWin = '最大中奖次数不能超过总参与次数'
+      const selectMem = '请选中参与活动的会员等级'
+      const titleMem = '可参与用户'
+
+      if (isMember === 1 && checkList.length === 0) {
+        this._Alert(selectMem, titleMem)
+        return
+      }
+
+      if (flag === 1 && participateNum > totalNum) {
+        this._Alert(titleTotal, titleDay)
+        return
+      }
+
+      if (flag === 1 && maxWinning > totalNum) {
+        this._Alert(titleMaxWin, titleCount)
+        return
+      }
+
+      if (flag === 0 && maxWinning > participateNum) {
+        this._Alert(titleMaxWin, titleCount)
+        return
+      }
+
       if (await this._checkForm()) {
         this.form.beginTime = this.form.dateValue[0]
         this.form.endTime = this.form.dateValue[1]
         this.form.imgName = this.form.fileList[0].url
 
+        const body = Object.assign({}, this.form)
+        body.grade = this.checkList.join(',')
+
         try {
-          const { code, msg } = await this.initDataFuncObj.basicUpdate(
-            this.form
-          )
+          const { code, msg } = await this.initDataFuncObj.basicUpdate(body)
           this.$message.success(msg)
           this._getActiveSet()
 
@@ -221,7 +327,7 @@ export default {
     },
     inputFun(e) {
       // 此方法校验输入框
-      const input = e.target;
+      const input = e.target
       const Val = input.value
       const reg = /(^[0-9]+$)|(^\s*$)/
       const That = input.getAttribute('data-type')
@@ -231,7 +337,7 @@ export default {
       }
       this.timer = setTimeout(() => {
         if (!reg.test(Val)) {
-          input.value = '';
+          input.value = ''
         }
       }, 500)
     },
@@ -269,6 +375,16 @@ export default {
     async _getActiveSet(options = { activeId: this.$route.query.id }) {
       try {
         const { data } = await this.initDataFuncObj.queryActive(options)
+
+        this.form = Object.assign(this.form, data)
+        this.checkList = data.grade ? data.grade.split(',') : []
+        this.form.isNum = data.isNum ? String(data.isNum) : '1'
+        this.form.totalNum = data.totalNum ? Number(data.totalNum) : 1
+        this.form.participateNum = data.participateNum
+          ? Number(data.participateNum)
+          : 1
+        this.form.maxWinning = data.maxWinning ? Number(data.maxWinning) : 1
+
         if (data.beginTime && data.endTime) {
           data.dateValue = [data.beginTime, data.endTime]
         } else {
@@ -299,6 +415,41 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.degree {
+  width: 721px;
+  height: 45px;
+  line-height: 45px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding-left: 20px;
+}
+
+.tip {
+  font-size: 12px;
+  color: #999;
+}
+
+.diy-input {
+  width: 74px;
+  height: 38px;
+  border-radius: 5px;
+  border: solid 1px #dcdfe6;
+  margin: 0 5px;
+  outline: none;
+  text-align: center;
+}
+
+.lable {
+  width: 110px;
+  text-align: right;
+  font-size: 14px;
+  font-family: MicrosoftYaHei;
+  line-height: 40px;
+  letter-spacing: 1px;
+  color: #606266;
+  min-width: 90px;
+}
+
 .info-col {
   flex: 1;
   display: flex;

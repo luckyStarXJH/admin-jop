@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="prompt">
+      <span class="prompt-title">中奖概率：</span>
+      单位游戏总次数条件下的中奖次数，例如：中奖率6% 即玩100次游戏最多能中奖6次 （也可能中奖0次），概率总和不能大于100%
+    </div>
     <el-row>
       <el-col :span="24">
         <el-checkbox v-model="isShowPhoto" true-label="1" false-label="0">是否在规则页显示奖品介绍</el-checkbox>
@@ -7,7 +11,7 @@
     </el-row>
     <div class="margin-line">
       <el-row type="flex" align="middle">
-        <el-col :span="1.5"> 
+        <el-col :span="1.5">
           <p>奖品设置：</p>
         </el-col>
         <el-col :span="2.5">
@@ -104,7 +108,7 @@ export default {
   },
   data() {
     return {
-      baseURL: process.env.VUE_APP_BASE_API,
+      baseURL: VUE_APP_BASE_API,
       uploadHeaders: {
         ticket: user.serverUser.ticket,
         companyKey: user.serverUser.account.companyKey,
@@ -265,6 +269,18 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.prompt {
+  width: 952px;
+  height: 40px;
+  line-height: 40px;
+  background-color: #f3f3f3;
+  border-radius: 4px;
+  padding-left: 10px;
+  font-size: 14px;
+  .prompt-title {
+    font-weight: bold;
+  }
+}
 .margin-line {
   margin: 15px 0;
 }

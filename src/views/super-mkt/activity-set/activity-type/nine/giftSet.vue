@@ -6,7 +6,7 @@
         <el-radio v-model="isShowPhoto" label="1">显示</el-radio>
         <el-radio v-model="isShowPhoto" label="0">不显示</el-radio>
       </div>
-      <ul> 
+      <ul>
         <li class="info-col">
           <div class="row1">
             <span>奖品设置：</span>
@@ -217,7 +217,7 @@ export default {
       formData.append('file', file)
       formData.append('alias', 'market')
       uploadBgImg(formData)
-        .then((res) => {
+        .then(res => {
           const { data, code, msg } = res
           if (code == 0) {
             if (index == '-1') {
@@ -553,7 +553,7 @@ export default {
       const res = await this.toqueryActiveAndJmpGift(body)
       return new Promise((resolve, reject) => {
         queryProducts(body)
-          .then((res) => {
+          .then(res => {
             const { data, code, msg } = res
             if (code == 0) {
               let Data
@@ -589,7 +589,7 @@ export default {
               reject(msg)
             }
           })
-          .catch((reason) => {
+          .catch(reason => {
             reject(reason)
           })
       })
@@ -601,7 +601,7 @@ export default {
       }
       return new Promise((resolve, reject) => {
         queryActiveAndJmpGift(body)
-          .then((res) => {
+          .then(res => {
             const { data, code, msg } = res
             if (code == 0 && data) {
               this.giftoptions = data.map((val, index) => {
@@ -698,7 +698,7 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)'
           })
           this.toproductsSave(from)
-            .then((res) => {
+            .then(res => {
               this.changetab()
               loading.close()
               this.changeActive()
@@ -716,7 +716,7 @@ export default {
     toproductsSave(body) {
       return new Promise((resolve, reject) => {
         productsSave(body)
-          .then((res) => {
+          .then(res => {
             const { data, code, msg } = res
             if (code == 0) {
               resolve(data)
@@ -724,7 +724,7 @@ export default {
               reject(msg)
             }
           })
-          .catch((reason) => {
+          .catch(reason => {
             reject(reason)
           })
       })

@@ -171,3 +171,22 @@ export function winningRecords(data: any) {
     data
   })
 }
+
+// 获取分享二维码
+export function queryShare(data: any) {
+  return request({
+    url: `${jopMarketingWebBaseUrl}/gameActive/queryShare`,
+    method: `POST`,
+    data
+  })
+}
+
+
+// 新版九宫格分享体积
+export function newUpdateShare(data: any) {
+  return request({
+    url: `${jopMarketingWebBaseUrl}/gameActive/newUpdateShare`,
+    method: 'POST',
+    data
+  })
+}

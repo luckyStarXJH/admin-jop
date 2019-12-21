@@ -32,3 +32,12 @@ export function deleteScheme(data: any) {
     data
   })
 }
+
+// JMP会员等级查询
+export function queryMemberGrade(data: any) {
+  return request({
+    url: `${jopMarketingWebBaseUrl}/gameActive/queryMemberGrade`,
+    method: 'POST',
+    data,
+  })
+}

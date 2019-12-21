@@ -828,7 +828,7 @@ export default class QrCode extends Vue {
 
     // const res = await builderQrcode(body);
 
-    const url = new URL('/jop-wx-web/imagehandler/builderQrcode2', process.env.VUE_APP_BASE_API);
+    const url = new URL('/jop-wx-web/imagehandler/builderQrcode2', VUE_APP_BASE_API);
     for (const [key, value] of Object.entries(body)) {
       url.searchParams.append(key, value as string);
     }

@@ -15,7 +15,7 @@ export function imagesUrl(options: ImagesUrlOptions): string {
   const { user } = getSessionStorage();
   const { account } = user;
   const { companyKey } = account;
-  const baseUrl = process.env.VUE_APP_BASE_API;
+  const baseUrl = VUE_APP_BASE_API;
   const {
     alias,
     name,

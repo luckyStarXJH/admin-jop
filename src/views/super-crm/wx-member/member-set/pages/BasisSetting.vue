@@ -150,7 +150,7 @@ export default class HomeModule extends Vue {
   }
   // 上传图片路径
   uploadUrl(type: string): string {
-    return `${process.env.VUE_APP_BASE_API}/jop-wx-web/wxCompany/uploadCompanyLogo?type=${type}`;
+    return `${VUE_APP_BASE_API}/jop-wx-web/wxCompany/uploadCompanyLogo?type=${type}`;
   }
 
   private mounted() {

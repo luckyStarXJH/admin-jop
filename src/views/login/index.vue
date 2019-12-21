@@ -141,12 +141,12 @@ export default class Login extends Vue {
     }
     validateCompanyKey({companyKey: this.resetForm.companyKey}).then((res: any) => {
       this.phone = res.data || '';
-      this.validateImg = `${process.env.VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.phone}?${Math.random()}`;
+      this.validateImg = `${VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.phone}?${Math.random()}`;
     })
   }
 
   private imgSrcClick() {
-    this.validateImg = `${process.env.VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.phone}?${Math.random()}`;
+    this.validateImg = `${VUE_APP_BASE_API}/jop-web/wxCode/randanCode?openid=${this.phone}?${Math.random()}`;
   }
 
   private getMessageCode() {

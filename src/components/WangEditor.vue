@@ -79,7 +79,7 @@ export default class WangEditor extends Vue {
     }
     this.editor.customConfig.uploadImgShowBase64 = true
 
-    this.editor.customConfig.uploadImgServer = `${process.env.VUE_APP_BASE_API}/jop-wx-web/file/upload`
+    this.editor.customConfig.uploadImgServer = `${VUE_APP_BASE_API}/jop-wx-web/file/upload`
     this.editor.customConfig.uploadImgParams = {
       edit: 'edit',
       alias: 'photos'

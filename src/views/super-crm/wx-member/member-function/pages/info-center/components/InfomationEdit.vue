@@ -130,7 +130,7 @@ export default class InfomationEdit extends Vue {
   }
   // 上传图片路径
   uploadUrl(): string {
-    return `${process.env.VUE_APP_BASE_API}/jop-wx-web/file/upload`;
+    return `${VUE_APP_BASE_API}/jop-wx-web/file/upload`;
   }
 
   private uploadSuccess(res: any) {

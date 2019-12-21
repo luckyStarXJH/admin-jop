@@ -1,5 +1,6 @@
 
-const httpBaseUrl = process.env.VUE_APP_BASE_API;
+// const httpBaseUrl = process.env.VUE_APP_BASE_API;
+const httpBaseUrl = VUE_APP_BASE_API;
 
 export const jopAdminBaseUrl = `${httpBaseUrl}/jop-admin-web`;
 export const jopWXBaseUrl = `${httpBaseUrl}/jop-wx-web`;

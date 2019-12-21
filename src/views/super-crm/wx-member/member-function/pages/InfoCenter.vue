@@ -367,7 +367,7 @@ export default class InfoCenter extends Vue {
   }
 
   private copuText(item: any) {
-    return `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=consult-details/${item.id}`;
+    return `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&page=consult-details/${item.id}`;
   }
 
   private copyItemLink(item: any) {

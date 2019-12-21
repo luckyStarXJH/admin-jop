@@ -150,7 +150,7 @@ export default class ServicerManage extends Vue {
 
   // 上传图片路径
   private uploadUrl(): string {
-    return `${process.env.VUE_APP_BASE_API}/chat-web/chatInfo/uploadImg`;
+    return `${VUE_APP_BASE_API}/chat-web/chatInfo/uploadImg`;
   }
 
   // 上传头像

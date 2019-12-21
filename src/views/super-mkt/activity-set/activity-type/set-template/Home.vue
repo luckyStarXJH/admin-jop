@@ -108,7 +108,7 @@ export default {
     shareLink(item) {
       this.showQR = true
       this.ActiveName = item.activityName
-      this.LinkValue = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&shareId=${item.id}&page=wx_game_package`
+      this.LinkValue = `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&shareId=${item.id}&page=wx_game_package`
     },
     toAddPage() {
       this.$router.push(this.activityPage)

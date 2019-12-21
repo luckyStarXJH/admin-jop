@@ -36,12 +36,12 @@
         <div class="item-header">
           <span class="title">门店访问权限</span>
 
-          <label class="check-all-checkbox" for="checkall" v-show="!isAndroidDayPrice">
+          <label class="check-all-checkbox" for="checkall" v-show="!(isAndroidDayPrice || isMemberManagementIOS)">
             <el-checkbox v-model="shopListAllCheck" @change="toCheckAllShop">全选</el-checkbox>
           </label>
         </div>
 
-        <div class="item-body" v-if="isAndroidDayPrice">
+        <div class="item-body" v-if="isAndroidDayPrice || isMemberManagementIOS">
           <el-radio-group v-model="androidDayPriceShopItem">
             <el-radio
               class="android-day-pice-shop-item"
@@ -57,64 +57,121 @@
         </div>
       </div>
 
-      <div class="edit-item" v-show="appPerssionData.menuList.length > 0">
-        <div class="item-header">
-          <span class="title">用户菜单设置</span>
+      <div class="member-management-control" v-if="isMemberManagementIOS">
+        <div class="member-management-title">敏感信息设置</div>
+        <div class="member-management-content">
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.phone" size="medium">拨打电话功能</el-checkbox>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.selectConsumeRecord" size="medium">查看消费记录</el-checkbox>
+          </div>
         </div>
-        <div class="item-body">
-          <div class="menu-content" style="width: 100%" v-for="item in appPerssionData.menuList" :key="item.appCode">
-            <div class="menu">
-              <el-checkbox v-model="item.isSelect" size="medium">{{item.menuName}}</el-checkbox>
-            </div>
-            <div class="item-menu">
-              <div v-for="menuItem in item.childMenu" :key="menuItem.menuId">
-                <el-checkbox v-model="menuItem.isSelect" @change="menuItemChange(menuItem)">{{menuItem.menuName}}</el-checkbox>
+        <div class="member-management-title">赠送操作设置</div>
+        <div class="member-management-content-1">
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.giveIntegral" size="medium">赠送积分</el-checkbox>
+            <span class="info-item-1">
+              设置每个账号每月可赠送积分限额：
+              <el-input style="width:80px" v-model="MemberManagementIOSData.giveIntegralLimit"></el-input>
+            </span>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.giveCoupon" size="medium">赠送优惠券</el-checkbox>
+            <span class="info-item-2">
+              设置每个账号每月可赠送优惠券张数：
+              <el-input style="width:80px" v-model="MemberManagementIOSData.giveCouponNum"></el-input>
+            </span>
+          </div>
+        </div>
+        <div class="member-management-title">其他操作</div>
+        <div class="member-management-content">
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.sendSms" size="medium">发送短信</el-checkbox>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.inviteReviews" size="medium">邀请评价</el-checkbox>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.addFlag" size="medium">添加标签</el-checkbox>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.followRecord" size="medium">跟进记录</el-checkbox>
+          </div>
+        </div>
+        <div class="member-management-header">批量功能开关</div>
+        <div class="member-management-title">信息发送</div>
+        <div class="member-management-content">
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.sendWxTemplateByBatch" size="medium">批量发送微信模板信息</el-checkbox>
+          </div>
+          <div>
+            <el-checkbox v-model="MemberManagementIOSData.sendSmsByBatch" size="medium">批量发送短信消息</el-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <div v-else>
+        <div class="edit-item" v-show="appPerssionData.menuList.length > 0">
+          <div class="item-header">
+            <span class="title">用户菜单设置</span>
+          </div>
+          <div class="item-body">
+            <div class="menu-content" style="width: 100%" v-for="item in appPerssionData.menuList" :key="item.appCode">
+              <div class="menu">
+                <el-checkbox v-model="item.isSelect" size="medium">{{item.menuName}}</el-checkbox>
+              </div>
+              <div class="item-menu">
+                <div v-for="menuItem in item.childMenu" :key="menuItem.menuId">
+                  <el-checkbox v-model="menuItem.isSelect" @change="menuItemChange(menuItem)">{{menuItem.menuName}}</el-checkbox>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="edit-item" v-show="appPerssionData.appMenuPermissionList.length > 0">
-        <div class="item-header">
-          <span class="title">菜单访问权限</span>
-        </div>
-        <div class="item-body">
-          <div v-for="item in appPerssionData.appMenuPermissionList" :key="item.id" class="item-check">
-            <el-checkbox @change="topChange(item)" v-model="item.value" size="medium" true-label="1" false-label="0">{{item.name}}</el-checkbox>
-            <div class="child-item-menu">
-              <el-checkbox
-                style="font-size:12px;"
-                v-for="childItem in item.childMenu"
-                :key="childItem.id"
-                @change="itemChange(item, childItem.value)"
-                v-model="childItem.value"
-                true-label="1"
-                false-label="0">{{childItem.name}}</el-checkbox>
+        <div class="edit-item" v-show="appPerssionData.appMenuPermissionList.length > 0">
+          <div class="item-header">
+            <span class="title">菜单访问权限</span>
+          </div>
+          <div class="item-body">
+            <div v-for="item in appPerssionData.appMenuPermissionList" :key="item.id" class="item-check">
+              <el-checkbox @change="topChange(item)" v-model="item.value" size="medium" true-label="1" false-label="0">{{item.name}}</el-checkbox>
+              <div class="child-item-menu">
+                <el-checkbox
+                  style="font-size:12px;"
+                  v-for="childItem in item.childMenu"
+                  :key="childItem.id"
+                  @change="itemChange(item, childItem.value)"
+                  v-model="childItem.value"
+                  true-label="1"
+                  false-label="0">{{childItem.name}}</el-checkbox>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div class="edit-item" v-show="appPerssionData.otherPermissionList.length > 0">
+          <div class="item-header">
+            <span class="title">其他权限控制</span>
+          </div>
+          <div class="item-body">
+            <el-form label-width="180px" v-for="(ite, index) in appPerssionData.otherPermissionList" :key="index">
+              <el-form-item label="选项" v-if="ite.type == 'checkbox'">
+                <el-checkbox
+                  style="padding-right: 20px;"
+                  true-label="1"
+                  false-label="0"
+                  v-model="ite.value">{{ ite.name }}</el-checkbox>
+              </el-form-item>
+              <el-form-item :label="ite.name" v-if="ite.type == 'textbox'">
+                <el-input v-model="ite.value" :placeholder="ite.name" style="width: 320px"></el-input>
+              </el-form-item>
+            </el-form>
           </div>
         </div>
       </div>
 
-      <div class="edit-item" v-show="appPerssionData.otherPermissionList.length > 0">
-        <div class="item-header">
-          <span class="title">其他权限控制</span>
-        </div>
-        <div class="item-body">
-          <el-form label-width="180px" v-for="(ite, index) in appPerssionData.otherPermissionList" :key="index">
-            <el-form-item label="选项" v-if="ite.type == 'checkbox'">
-              <el-checkbox
-                style="padding-right: 20px;"
-                true-label="1"
-                false-label="0"
-                v-model="ite.value">{{ ite.name }}</el-checkbox>
-            </el-form-item>
-            <el-form-item :label="ite.name" v-if="ite.type == 'textbox'">
-              <el-input v-model="ite.value" :placeholder="ite.name" style="width: 320px"></el-input>
-            </el-form-item>
-          </el-form>
-        </div>
-      </div>
     </div>
 
     <div class="submit-btn"><el-button size="small" @click="submitPermission" type="primary">保存</el-button></div>
@@ -147,9 +204,27 @@ export default class PerssionEdit extends Vue {
   private shopListAllCheck: boolean = false;
   private menuListAllCheck: boolean = false;
   private androidDayPriceShopItem: any = '';
+  private MemberManagementIOSData = {
+    phone: false,
+    selectConsumeRecord: false,
+    giveIntegral: false,
+    giveIntegralLimit: '',
+    giveCoupon: false,
+    giveCouponNum: '',
+    sendSms: false,
+    inviteReviews: false,
+    addFlag: false,
+    followRecord: false,
+    sendWxTemplateByBatch: false,
+    sendSmsByBatch: false,
+  }
 
   get isAndroidDayPrice() {
     return this.appInfo.appCode === 'dayPrice' && this.channel === 'android_tv';
+  }
+
+  get isMemberManagementIOS() {
+    return this.appInfo.appCode === 'memberManagement' && this.channel === 'ios';
   }
 
   private mounted() {
@@ -250,7 +325,7 @@ export default class PerssionEdit extends Vue {
     getAccountAllPermission(params).then((res: any) => {
       // 门店权限
       const list = res.data && res.data.shopPermissionList ? res.data.shopPermissionList : [];
-      if (this.channel === 'android_tv' && this.appInfo.appCode === 'dayPrice') {
+      if (this.isAndroidDayPrice || this.isMemberManagementIOS) {
         const item = list.find((p: any) => {
           return p.isSelect;
         })
@@ -267,19 +342,23 @@ export default class PerssionEdit extends Vue {
         }
       }
       this.appPerssionData.shopList = list;
-      // 用户菜单权限
-      this.appPerssionData.menuList = res.data && res.data.menuPermissionList ? res.data.menuPermissionList : [];
-      // 其他权限
-      if (res.data && res.data.otherPermissionList) {
-        this.appPerssionData.appMenuPermissionList = res.data.otherPermissionList.filter((p: any) => {
-          return p.type == 'mobile';
-        });
-        this.appPerssionData.otherPermissionList = res.data.otherPermissionList.filter((p: any) => {
-          return p.type != 'mobile';
-        })
+      if (this.isMemberManagementIOS) {
+        this.MemberManagementIOSData = res.data && res.data.memberManagementPermission ? res.data.memberManagementPermission : this.MemberManagementIOSData;
       } else {
-        this.appPerssionData.appMenuPermissionList = [];
-        this.appPerssionData.otherPermissionList = [];
+        // 用户菜单权限
+        this.appPerssionData.menuList = res.data && res.data.menuPermissionList ? res.data.menuPermissionList : [];
+        // 其他权限
+        if (res.data && res.data.otherPermissionList) {
+          this.appPerssionData.appMenuPermissionList = res.data.otherPermissionList.filter((p: any) => {
+            return p.type == 'mobile';
+          });
+          this.appPerssionData.otherPermissionList = res.data.otherPermissionList.filter((p: any) => {
+            return p.type != 'mobile';
+          })
+        } else {
+          this.appPerssionData.appMenuPermissionList = [];
+          this.appPerssionData.otherPermissionList = [];
+        }
       }
     })
   }
@@ -292,6 +371,7 @@ export default class PerssionEdit extends Vue {
       shopPermission: '',
       menuPermission: '',
       otherPermission: '',
+      memberManagementPermission: '',
       channel: this.channel
     }
     // 门店
@@ -302,42 +382,49 @@ export default class PerssionEdit extends Vue {
       const shopList = this.appPerssionData.shopList.filter((p: any) => p.isSelect).map((p: any) => p.name);
       params.shopPermission = shopList.join(',');
     }
-    // 菜单
-    const menuList = [];
-    for (const item of this.appPerssionData.menuList) {
-      if ((item as any).isSelect) {
-        menuList.push((item as any).menuId);
-        (item as any).childMenu.forEach((p: any) => {
-          if (p.isSelect) {
-            menuList.push(p.menuId)
-          }
-        })
-      }
-    }
-    params.menuPermission = menuList.join(',');
-    // 其他
-    const otherPermission: any[] = [];
-    this.appPerssionData.appMenuPermissionList.forEach((p: any) => {
-      otherPermission.push({
-        id: p.id,
-        value: p.value
-      })
-      if (p.childMenu && p.childMenu.length > 0) {
-        p.childMenu.forEach((t: any) => {
-          otherPermission.push({
-            id: t.id,
-            value: t.value
+    if (this.isMemberManagementIOS) {
+      delete params.menuPermission;
+      delete params.otherPermission;
+      params.memberManagementPermission = JSON.stringify(this.MemberManagementIOSData);
+    } else {
+      delete params.memberManagementPermission;
+      // 菜单
+      const menuList = [];
+      for (const item of this.appPerssionData.menuList) {
+        if ((item as any).isSelect) {
+          menuList.push((item as any).menuId);
+          (item as any).childMenu.forEach((p: any) => {
+            if (p.isSelect) {
+              menuList.push(p.menuId)
+            }
           })
-        })
+        }
       }
-    });
-    this.appPerssionData.otherPermissionList.forEach((p: any) => {
-      otherPermission.push({
-        id: p.id,
-        value: p.value
-      })
-    });
-    params.otherPermission = JSON.stringify(otherPermission);
+      params.menuPermission = menuList.join(',');
+      // 其他
+      const otherPermission: any[] = [];
+      this.appPerssionData.appMenuPermissionList.forEach((p: any) => {
+        otherPermission.push({
+          id: p.id,
+          value: p.value
+        })
+        if (p.childMenu && p.childMenu.length > 0) {
+          p.childMenu.forEach((t: any) => {
+            otherPermission.push({
+              id: t.id,
+              value: t.value
+            })
+          })
+        }
+      });
+      this.appPerssionData.otherPermissionList.forEach((p: any) => {
+        otherPermission.push({
+          id: p.id,
+          value: p.value
+        })
+      });
+      params.otherPermission = JSON.stringify(otherPermission);
+    }
     // 判断应用是否开通
     if (!this.appInfo.isSelect) {
       this.$confirm('确定取消开通该应用权限？', '提示', {
@@ -468,7 +555,7 @@ export default class PerssionEdit extends Vue {
 
   .edit-perssion-content {
     height: calc(100vh - 340px);
-    overflow: auto;
+    // overflow: auto;
     .edit-header {
       height: 50px;
       line-height: 50px;
@@ -543,6 +630,47 @@ export default class PerssionEdit extends Vue {
       }
       .menu-content:not(:last-child) {
         border-bottom: 1px solid #dddddd;
+      }
+    }
+    .member-management-control {
+      height: calc(100vh - 340px);
+      // overflow: auto;
+      .member-management-title{
+        font-size: 14px;
+        color: #606266;
+        // padding: 30px;
+        padding: 28px 0 0 30px;
+      }
+      .member-management-header {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333333;
+        padding: 28px 0 0 25px;
+      }
+      .member-management-content {
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 25px;
+        div {
+          width: 180px;
+          padding-top: 12px;
+        }
+      }
+      .member-management-content-1 {
+        padding-left: 25px;
+        div {
+          padding-top: 10px;
+        }
+        span {
+          font-size: 14px;
+          color: #606266;
+        }
+        .info-item-1 {
+          padding-left: 58px;
+        }
+        .info-item-2 {
+          padding-left: 30px;
+        }
       }
     }
   }

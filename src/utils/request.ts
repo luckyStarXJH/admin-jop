@@ -6,7 +6,7 @@ import router from '@/router';
 
 // create an axios instance
 const service = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: VUE_APP_BASE_API, // url = base url + request url
   withCredentials: false, // send cookies when cross-domain requests
   timeout: 20000 // request timeout
 })
@@ -76,18 +76,3 @@ service.interceptors.response.use(
 )
 
 export default service
-
-// 查询企业资料
-/* getCompanyInfo() {
-  return new Promise((resolve, reject) => {
-    const body = {}
-
-    getCompanyInfoOptions(body).then(res => {
-      const {data} = res;
-
-      resolve(res);
-    }).catch(reason => {
-      reject(reason)
-    })
-  })
-} */

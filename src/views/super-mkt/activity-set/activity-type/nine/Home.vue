@@ -140,7 +140,7 @@ export default {
     showQRURL(item) {
       const data = item
       this.ActiveName = data.activityName
-      this.Linkvalue = `${process.env.VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&shareId=${data.id}&childPage=jggIndex&page=wx_game`
+      this.Linkvalue = `${VUE_APP_BASE_API}/wx-interface-web/wx/auth?companyKey=${user.serverUser.account.companyKey}&shareId=${data.id}&childPage=jggIndex&page=wx_game`
       const params = {
         element: document.getElementById('canvas-qr'),
         value: this.Linkvalue,
