@@ -28,7 +28,7 @@
         label="标签排序"
         align="center">
         <template slot-scope="scope">
-          <el-input v-if="scope.$index === editableIndex" size="small" v-model="scope.row.tagSort" @keyup.native="number(scope.$index)" maxlength="2"></el-input>
+          <el-input v-if="scope.$index === editableIndex" placeholder="只能输入1-99的数字" size="small" v-model="scope.row.tagSort" @keyup.native="number(scope.$index)" maxlength="2"></el-input>
           <span v-else>{{ scope.row.tagSort }}</span>
         </template>
       </el-table-column>
@@ -92,7 +92,7 @@
           <el-input  v-model.trim="formTag.name" placeholder="标签名称最长支持8个汉字" auto-complete="off" maxlength="8"></el-input>
         </el-form-item>
         <el-form-item label="标签默认排序：" :label-width="formLabelWidth" prop="sort" >
-          <el-input v-model="formTag.sort" placeholder="标签排序" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')" maxlength="2"></el-input>
+          <el-input v-model="formTag.sort" placeholder="只能输入1-99的数字" @keyup.native="addNumber" maxlength="2"></el-input>
         </el-form-item>
         <el-form-item label="标签状态：" :label-width="formLabelWidth">
           <template>
@@ -166,8 +166,10 @@ export default class PositionTable extends Vue {
   }
   // 只能输入正整数
   private number(index: number) {
-    this.accountList[index].tagSort = this.accountList[index].tagSort.replace(/[^\.\d]/g, '');
-    this.accountList[index].tagSort = this.accountList[index].tagSort.replace('.', '');
+    this.accountList[index].tagSort = this.accountList[index].tagSort.replace(/\D|^0/g, '');
+  }
+  private addNumber() {
+   this.formTag.sort = this.formTag.sort.replace(/\D|^0/g, '');
   }
   // 编辑
   private handleEdit(index: number, item: any) {
@@ -183,6 +185,9 @@ export default class PositionTable extends Vue {
           type: 'success'
         })
       }
+    })
+    .catch((err: any) => {
+      this.listMemberTag();
     });
   }
   // 设置显示隐藏
@@ -247,8 +252,6 @@ export default class PositionTable extends Vue {
     })
     if (this.formTag.name === '' || this.formTag.sort === '') {
       return;
-    } else {
-     this.removeRule();
     }
     addMemberTag(params).then((res: any) => {
       if (res.code === 0) {

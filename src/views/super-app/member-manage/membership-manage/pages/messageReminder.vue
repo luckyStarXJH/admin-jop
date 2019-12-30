@@ -13,7 +13,7 @@
           <el-checkbox label="会员生日提醒" true-label="1" false-label="0" v-model="checkList.memBirthDayRemind" class="m-birthday"></el-checkbox>
           <div class="message-date">
             <span class="message-span">设置提醒范围：</span>
-            <el-input class="el-input-class" v-model="checkList.remindDayLimit" @blur="chechNum" :disabled="checkList.memBirthDayRemind === '0' ? true : false"></el-input>
+            <el-input class="el-input-class" v-model="checkList.remindDayLimit" @keyup.native="chechNum" :disabled="checkList.memBirthDayRemind === '0' ? true : false"></el-input>
             <span class="message-span-s">（支持1-30天）</span>
           </div>
         </div>

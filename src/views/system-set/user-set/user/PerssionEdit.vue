@@ -60,24 +60,24 @@
       <div class="member-management-control" v-if="isMemberManagementIOS">
         <div class="member-management-title">敏感信息设置</div>
         <div class="member-management-content">
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.phone" size="medium">拨打电话功能</el-checkbox>
+          <div v-if="MemberManagementIOSData.phone">
+            <el-checkbox v-model="MemberManagementIOSData.phone" true-label="1" false-label="0" size="medium">拨打电话功能</el-checkbox>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.selectConsumeRecord" size="medium">查看消费记录</el-checkbox>
+          <div v-if="MemberManagementIOSData.selectConsumeRecord">
+            <el-checkbox v-model="MemberManagementIOSData.selectConsumeRecord" true-label="1" false-label="0" size="medium">查看消费记录</el-checkbox>
           </div>
         </div>
         <div class="member-management-title">赠送操作设置</div>
         <div class="member-management-content-1">
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.giveIntegral" size="medium">赠送积分</el-checkbox>
+          <div v-if="MemberManagementIOSData.giveIntegral">
+            <el-checkbox v-model="MemberManagementIOSData.giveIntegral" true-label="1" false-label="0" size="medium">赠送积分</el-checkbox>
             <span class="info-item-1">
               设置每个账号每月可赠送积分限额：
               <el-input style="width:80px" v-model="MemberManagementIOSData.giveIntegralLimit"></el-input>
             </span>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.giveCoupon" size="medium">赠送优惠券</el-checkbox>
+          <div v-if="MemberManagementIOSData.giveCoupon">
+            <el-checkbox v-model="MemberManagementIOSData.giveCoupon" true-label="1" false-label="0" size="medium">赠送优惠券</el-checkbox>
             <span class="info-item-2">
               设置每个账号每月可赠送优惠券张数：
               <el-input style="width:80px" v-model="MemberManagementIOSData.giveCouponNum"></el-input>
@@ -86,27 +86,27 @@
         </div>
         <div class="member-management-title">其他操作</div>
         <div class="member-management-content">
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.sendSms" size="medium">发送短信</el-checkbox>
+          <div v-if="MemberManagementIOSData.sendSms">
+            <el-checkbox v-model="MemberManagementIOSData.sendSms" true-label="1" false-label="0" size="medium">发送短信</el-checkbox>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.inviteReviews" size="medium">邀请评价</el-checkbox>
+          <div v-if="MemberManagementIOSData.inviteReviews">
+            <el-checkbox v-model="MemberManagementIOSData.inviteReviews" true-label="1" false-label="0" size="medium">邀请评价</el-checkbox>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.addFlag" size="medium">添加标签</el-checkbox>
+          <div v-if="MemberManagementIOSData.addFlag">
+            <el-checkbox v-model="MemberManagementIOSData.addFlag" true-label="1" false-label="0" size="medium">添加标签</el-checkbox>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.followRecord" size="medium">跟进记录</el-checkbox>
+          <div v-if="MemberManagementIOSData.followRecord">
+            <el-checkbox v-model="MemberManagementIOSData.followRecord" true-label="1" false-label="0" size="medium">跟进记录</el-checkbox>
           </div>
         </div>
         <div class="member-management-header">批量功能开关</div>
         <div class="member-management-title">信息发送</div>
         <div class="member-management-content">
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.sendWxTemplateByBatch" size="medium">批量发送微信模板信息</el-checkbox>
+          <div v-if="MemberManagementIOSData.sendWxTemplateByBatch">
+            <el-checkbox v-model="MemberManagementIOSData.sendWxTemplateByBatch" true-label="1" false-label="0" size="medium">批量发送微信模板信息</el-checkbox>
           </div>
-          <div>
-            <el-checkbox v-model="MemberManagementIOSData.sendSmsByBatch" size="medium">批量发送短信消息</el-checkbox>
+          <div v-if="MemberManagementIOSData.sendSmsByBatch">
+            <el-checkbox v-model="MemberManagementIOSData.sendSmsByBatch" true-label="1" false-label="0" size="medium">批量发送短信消息</el-checkbox>
           </div>
         </div>
       </div>
@@ -205,18 +205,18 @@ export default class PerssionEdit extends Vue {
   private menuListAllCheck: boolean = false;
   private androidDayPriceShopItem: any = '';
   private MemberManagementIOSData = {
-    phone: false,
-    selectConsumeRecord: false,
-    giveIntegral: false,
+    phone: '0',
+    selectConsumeRecord: '0',
+    giveIntegral: '0',
     giveIntegralLimit: '',
-    giveCoupon: false,
+    giveCoupon: '0',
     giveCouponNum: '',
-    sendSms: false,
-    inviteReviews: false,
-    addFlag: false,
-    followRecord: false,
-    sendWxTemplateByBatch: false,
-    sendSmsByBatch: false,
+    sendSms: '0',
+    inviteReviews: '0',
+    addFlag: '0',
+    followRecord: '0',
+    sendWxTemplateByBatch: '0',
+    sendSmsByBatch: '0'
   }
 
   get isAndroidDayPrice() {

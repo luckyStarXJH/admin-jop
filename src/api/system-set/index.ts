@@ -326,7 +326,7 @@ export function updateMemberTagStatus(data: any) {
     data
   })
 }
-// 添加会员标签
+// 添加会员标签 test
 export function addMemberTag(data: any) {
   return request({
     url: `${jopWXBaseUrl}/wxMemberManager/addMemberTag`,
